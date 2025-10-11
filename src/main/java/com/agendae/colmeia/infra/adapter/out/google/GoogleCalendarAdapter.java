@@ -58,7 +58,7 @@ public class GoogleCalendarAdapter implements CalendarProviderPort {
                     List.of(tokenResponse.getScope().split(" "))
             );
         } catch (IOException e) {
-            // Em uma aplicação real, é melhor lançar uma exceção de domínio customizada.
+            // TODO lançar uma exceção de domínio própria.
             throw new RuntimeException("Erro ao trocar o código pelo token", e);
         }
     }

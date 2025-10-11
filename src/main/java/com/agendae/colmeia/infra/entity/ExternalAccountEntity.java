@@ -1,36 +1,38 @@
-package com.agendae.colmeia.domain.model;
+package com.agendae.colmeia.infra.entity;
 
-// Anotações do Lombok foram removidas
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+// As anotações do Lombok @Getter e @Setter foram removidas
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
- * Representa a vinculação de uma conta de um provedor externo (Google, Outlook)
- * a um usuário do nosso sistema.
+ * Representa a tabela 'external_accounts' no banco de dados.
+ * Esta é uma entidade JPA, acoplada à tecnologia de persistência.
  */
-public class ExternalAccount {
+@Entity
+@Table(name = "external_accounts")
+public class ExternalAccountEntity {
 
+    @Id
     private UUID id;
+
+    @Column(name = "user_id", nullable = false)
     private UUID userId;
-    private String provider; // Ex: "GOOGLE", "OUTLOOK"
+
+    @Column(nullable = false)
+    private String provider;
+
+    @Column(name = "provider_user_id", nullable = false)
     private String providerUserId;
+
+    @Column(name = "account_email", nullable = false)
     private String accountEmail;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;
-    private Credentials credentials;
-
-    // Construtor vazio
-    public ExternalAccount() {}
-
-    // Construtor com todos os campos para facilitar a criação
-    public ExternalAccount(UUID id, UUID userId, String provider, String providerUserId, String accountEmail, OffsetDateTime createdAt, Credentials credentials) {
-        this.id = id;
-        this.userId = userId;
-        this.provider = provider;
-        this.providerUserId = providerUserId;
-        this.accountEmail = accountEmail;
-        this.createdAt = createdAt;
-        this.credentials = credentials;
-    }
 
     // Getters e Setters Manuais
     public UUID getId() { return id; }
@@ -50,8 +52,5 @@ public class ExternalAccount {
 
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
-
-    public Credentials getCredentials() { return credentials; }
-    public void setCredentials(Credentials credentials) { this.credentials = credentials; }
 }
 

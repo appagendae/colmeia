@@ -14,7 +14,7 @@ public interface ExternalAccountRepositoryPort {
      * @return um Optional contendo a ExternalAccount se encontrada, ou vazio caso contrário.
      */
     Optional<ExternalAccount> findById(UUID id);
-
+    Optional<ExternalAccount> findByProviderAndProviderUserId(String provider, String providerUserId);
     /**
      * Salva (cria ou atualiza) uma conta externa.
      *

@@ -4,6 +4,7 @@ import com.agendae.colmeia.infra.entity.ExternalAccountEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -13,6 +14,6 @@ import java.util.UUID;
  */
 @Repository
 public interface SpringDataExternalAccountRepository extends JpaRepository<ExternalAccountEntity, UUID> {
-    // Você pode adicionar métodos de busca customizados aqui.
-    // Ex: Optional<ExternalAccountEntity> findByProviderAndProviderUserId(String provider, String providerUserId);
+    // TODO adicionar métodos de busca customizados
+    Optional<ExternalAccountEntity> findByProviderAndProviderUserId(String provider, String providerUserId);
 }

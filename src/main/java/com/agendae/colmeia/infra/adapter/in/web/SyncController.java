@@ -8,9 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RestController
-// O @RequestMapping foi corrigido de "/api/v1/sync" para "/api/v1"
-// para corresponder à chamada do frontend.
-@RequestMapping("/api/v1")
+// DEFINIÇÃO DE ROTA MAIS CLARA E AGRUPADA
+@RequestMapping("/api/v1/sync/google")
 public class SyncController {
 
     private final SyncCalendar syncCalendar;
@@ -19,20 +18,19 @@ public class SyncController {
         this.syncCalendar = syncCalendar;
     }
 
-    // O @GetMapping foi corrigido para incluir o caminho completo.
-    @GetMapping("/sync/google/auth/{userId}")
+    // O caminho agora é apenas o que varia: "/auth/{userId}"
+    @GetMapping("/auth/{userId}")
     public void googleAuthRedirect(@PathVariable UUID userId, HttpServletResponse response) throws IOException {
-        String authorizationUrl = syncCalendar.getGoogleAuthorizationUrl(userId);
+        String authorizationUrl = syncCalendar.getGoogleAuthorizationUrl(userId.toString());
         response.sendRedirect(authorizationUrl);
     }
 
-    // O @GetMapping foi corrigido para incluir o caminho completo.
-    @GetMapping("/sync/google/callback")
+    // O caminho agora é apenas "/callback"
+    @GetMapping("/callback")
     public ResponseEntity<String> googleCallback(@RequestParam("code") String code, @RequestParam("state") String state) {
         // O 'state' deve ser validado e usado para recuperar o userId
-        UUID userId = UUID.fromString(state); // Simplificação
-        syncCalendar.handleGoogleCallback(userId, code);
+        // UUID userId = UUID.fromString(state); // passando o state direto
+        syncCalendar.handleGoogleCallback(state, code);
         return ResponseEntity.ok("Successfully authenticated with Google. You can close this window.");
     }
 }
-

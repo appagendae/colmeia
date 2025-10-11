@@ -20,6 +20,15 @@ public class ExternalAccountRepositoryAdapter implements ExternalAccountReposito
     }
 
     @Override
+    public Optional<ExternalAccount> findByProviderAndProviderUserId(String provider, String providerUserId) {
+        // 1. Chama o método do repositório JPA
+        Optional<ExternalAccountEntity> entityOptional = jpaRepository.findByProviderAndProviderUserId(provider, providerUserId);
+
+        // 2. Mapeia o resultado (Entity) para o modelo de domínio, se existir
+        return entityOptional.map(this::toDomainModel);
+    }
+
+    @Override
     public Optional<ExternalAccount> findById(UUID id) {
         Optional<ExternalAccountEntity> entityOptional = jpaRepository.findById(id);
         return entityOptional.map(this::toDomainModel);

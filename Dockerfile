@@ -26,7 +26,6 @@ RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
 # Copia o JAR do estágio de build com as permissões corretas
 COPY --from=builder --chown=appuser:appgroup /app/target/*.jar app.jar
 
-# --- NOVA LINHA ADICIONADA AQUI ---
 # Cria o diretório de configuração com as permissões corretas
 RUN mkdir /app/config && chown appuser:appgroup /app/config
 

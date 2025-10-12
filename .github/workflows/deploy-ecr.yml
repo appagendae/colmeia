@@ -1,0 +1,53 @@
+# Nome do workflow que aparecerá na aba "Actions" do GitHub
+name: 'Deploy to AWS ECR'
+
+# Define o gatilho (trigger) para iniciar o workflow
+on:
+  push:
+    branches:
+      - main # Executa quando houver um push na branch 'main'
+
+# Permissões necessárias para que a action possa obter um token de identidade
+permissions:
+  contents: read
+
+jobs:
+  # Define um trabalho (job) chamado 'build-and-push-to-ecr'
+  build-and-push-to-ecr:
+    name: 'Build and Push to ECR'
+    # Define o tipo de máquina virtual para executar o trabalho
+    runs-on: ubuntu-latest
+
+    # Define as variáveis de ambiente para este trabalho
+    env:
+      AWS_REGION: 'us-east-2' # Substitua pela sua região da AWS
+      ECR_REPOSITORY: 'colmeia' # Substitua pelo nome do seu repositório ECR para este serviço
+
+    # Sequência de passos a serem executados
+    steps:
+      # 1. Clona o código do seu repositório para a máquina virtual
+      - name: 'Checkout repository'
+        uses: actions/checkout@v4
+
+      # 2. Configura as credenciais da AWS usando os Secrets que você criou
+      - name: 'Configure AWS credentials'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # 3. Faz login no Amazon Elastic Container Registry (ECR)
+      - name: 'Login to Amazon ECR'
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # 4. Constrói a imagem Docker, adiciona uma tag e a envia para o ECR
+      - name: 'Build, tag, and push image to Amazon ECR'
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG

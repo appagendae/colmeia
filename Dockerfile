@@ -2,12 +2,15 @@
 FROM eclipse-temurin:21-jdk-jammy AS builder
 WORKDIR /app
 
+
+# Copia os arquivos de dependência
+COPY .mvn/ .mvn
+COPY mvnw pom.xml ./
+
 # Garante que o maven wrapper é executável
 RUN chmod +x mvnw
 
-# Copia os arquivos de dependência e baixa as dependências (cache de camada)
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
+#Baixa as dependências (cache de camada)
 RUN ./mvnw dependency:go-offline
 
 # Copia o código fonte e compila

@@ -31,4 +31,4 @@ COPY --from=builder --chown=appuser:appgroup /app/target/*.jar app.jar
 USER appuser
 
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Dloader.path=/app/", "-jar", "app.jar"]

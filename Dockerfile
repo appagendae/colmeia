@@ -34,4 +34,4 @@ RUN mkdir /app/config && chown appuser:appgroup /app/config
 USER appuser
 
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-cp", "/app/config/:/app/app.jar", "org.springframework.boot.loader.launch.JarLauncher"]

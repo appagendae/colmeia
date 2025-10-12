@@ -69,7 +69,7 @@ jobs:
               --network agendae-network \
               --restart always \
               -p 127.0.0.1:8080:8080 \
-              -v /etc/colmeia/secrets/credentials.json:/app/credentials.json \
+              -v /etc/colmeia/secrets/credentials.json:/app/config/credentials.json:ro \            
               -e SPRING_DATASOURCE_URL=jdbc:postgresql://colmeia_pdb:5432/colmeia_db \
               -e SPRING_DATASOURCE_USERNAME=colmeia_user \
               -e SPRING_DATASOURCE_PASSWORD=colmeia_pass \

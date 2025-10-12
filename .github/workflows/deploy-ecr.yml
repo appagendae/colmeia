@@ -45,21 +45,9 @@ jobs:
   deploy-to-ec2:
     name: 'Deploy to EC2 Instance'
     runs-on: ubuntu-latest
-    # Pré-requisito: este job só inicia se o job 'build-and-push-to-ecr' for bem-sucedido
     needs: build-and-push-to-ecr
 
     steps:
-      - name: 'Configure AWS credentials for EC2'
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: 'us-east-2' # Região da instância
-
-      - name: 'Login to Amazon ECR (needed on EC2 runner)'
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
       - name: 'Deploy to EC2'
         uses: appleboy/ssh-action@master
         with:
@@ -67,20 +55,23 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            # Comandos executados dentro da instância EC2
-            # Faz o login do Docker da instância no ECR
+            set -e
+            
             aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin ${{ needs.build-and-push-to-ecr.outputs.image }}
             
-            # Para o container atual com o mesmo nome, se estiver rodando
             docker stop colmeia || true
             docker rm colmeia || true
             
-            # Baixa a nova imagem do ECR
             docker pull ${{ needs.build-and-push-to-ecr.outputs.image }}
             
-            # Inicia o novo container
-            # Ajuste as portas (-p) e variáveis de ambiente (-e) conforme necessário
-            docker run -d --name colmeia -p 8080:8080 --restart always ${{ needs.build-and-push-to-ecr.outputs.image }}
+            docker run -d \
+              --name colmeia \
+              --network agendae-network \
+              --restart always \
+              -p 127.0.0.1:8080:8080 \
+              -e SPRING_DATASOURCE_URL=jdbc:postgresql://colmeia_pdb:5432/colmeia_db \
+              -e SPRING_DATASOURCE_USERNAME=colmeia_user \
+              -e SPRING_DATASOURCE_PASSWORD=colmeia_pass \
+              ${{ needs.build-and-push-to-ecr.outputs.image }}
             
-            # Remove imagens antigas e não utilizadas para liberar espaço
             docker image prune -af

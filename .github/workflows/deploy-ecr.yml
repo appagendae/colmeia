@@ -56,14 +56,14 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             set -e
-            
+          
             aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin ${{ needs.build-and-push-to-ecr.outputs.image }}
-            
+          
             docker stop colmeia || true
             docker rm colmeia || true
-            
+          
             docker pull ${{ needs.build-and-push-to-ecr.outputs.image }}
-            
+          
             docker run -d \
               --name colmeia \
               --network agendae-network \
@@ -74,5 +74,5 @@ jobs:
               -e SPRING_DATASOURCE_USERNAME=colmeia_user \
               -e SPRING_DATASOURCE_PASSWORD=colmeia_pass \
               ${{ needs.build-and-push-to-ecr.outputs.image }}
-            
+          
             docker image prune -af

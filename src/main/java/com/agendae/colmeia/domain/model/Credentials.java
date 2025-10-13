@@ -1,6 +1,9 @@
 package com.agendae.colmeia.domain.model;
 
 // Anotações do Lombok removidas
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -9,14 +12,18 @@ import java.util.UUID;
  * Representa as credenciais de autenticação de uma conta externa.
  * Este é um objeto de domínio puro, não acoplado a nenhuma tecnologia de persistência.
  */
+@Setter
+@Getter
 public class Credentials {
 
+    // Getters e Setters manuais
     private UUID id;
     private UUID externalAccountId;
     private String accessToken;
     private String refreshToken;
     private Instant expiresAt;
     private List<String> scopes;
+    private Long expiresIn;
 
     // Construtor vazio
     public Credentials() {}
@@ -31,23 +38,5 @@ public class Credentials {
         this.scopes = scopes;
     }
 
-    // Getters e Setters manuais
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
-
-    public UUID getExternalAccountId() { return externalAccountId; }
-    public void setExternalAccountId(UUID externalAccountId) { this.externalAccountId = externalAccountId; }
-
-    public String getAccessToken() { return accessToken; }
-    public void setAccessToken(String accessToken) { this.accessToken = accessToken; }
-
-    public String getRefreshToken() { return refreshToken; }
-    public void setRefreshToken(String refreshToken) { this.refreshToken = refreshToken; }
-
-    public Instant getExpiresAt() { return expiresAt; }
-    public void setExpiresAt(Instant expiresAt) { this.expiresAt = expiresAt; }
-
-    public List<String> getScopes() { return scopes; }
-    public void setScopes(List<String> scopes) { this.scopes = scopes; }
 }
 

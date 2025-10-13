@@ -13,7 +13,6 @@ import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Collections;
 import java.util.List;
 
 @Configuration
@@ -25,18 +24,20 @@ public class GoogleApiConfig {
     @Value("${google.credentials.path}")
     private Resource credentialsResource;
 
-    @Value("${google.scopes}")
-    private String scopes;
+    // Modificado para ler uma lista de escopos separados por vírgula
+    @Value("#{'${google.scopes}'.split(',')}")
+    private List<String> scopes;
 
     @Bean
     public GoogleAuthorizationCodeFlow googleAuthorizationCodeFlow() throws IOException {
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(credentialsResource.getInputStream()));
 
+        // Usa a lista de escopos diretamente
         return new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT,
                 JSON_FACTORY,
                 clientSecrets,
-                Collections.singletonList(scopes))
+                scopes)
                 .setAccessType("offline")
                 .build();
     }
